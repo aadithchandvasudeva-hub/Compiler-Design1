@@ -1,0 +1,7 @@
+Lexical Analysis Output:
+
+KEYWORD     : int
+IDENTIFIER  : a
+OPERATOR    : =
+NUMBER      : 5
+SEPARATOR   : ;
