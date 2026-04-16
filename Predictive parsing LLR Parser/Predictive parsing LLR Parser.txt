@@ -1,0 +1,63 @@
+PREDICTIVE PARSING (LL(1)) - SAMPLE PROBLEM & TRACE
+
+QUESTION:
+Given the following Context-Free Grammar (CFG), construct the LL(1) Parsing Table and trace the validation of the input string: 'id * id + id'
+
+Grammar:
+E  -> T E'
+E' -> + T E' | ε
+T  -> F T'
+T' -> * F T' | ε
+F  -> ( E ) | id
+
+-------------------------------------------------------------------------------
+SOLUTION:
+
+1. FIRST SETS:
+--------------------------------------------------
+FIRST(E)  = { (, id }
+FIRST(E') = { +, ε }
+FIRST(T)  = { (, id }
+FIRST(T') = { *, ε }
+FIRST(F)  = { (, id }
+
+2. FOLLOW SETS:
+--------------------------------------------------
+FOLLOW(E)  = { $, ) }
+FOLLOW(E') = { $, ) }
+FOLLOW(T)  = { +, $, ) }
+FOLLOW(T') = { +, $, ) }
+FOLLOW(F)  = { *, +, $, ) }
+
+3. LL(1) PARSING TABLE (M[A, a]):
+-------------------------------------------------------------------------------
+NT |    id     |     +     |     * |     (     |     )     |     $     
+---|-----------|-----------|-----------|-----------|-----------|-----------
+E  | E -> TE'  |           |           | E -> TE'  |           |           
+E' |           | E'-> +TE' |           |           | E' -> ε   | E' -> ε   
+T  | T -> FT'  |           |           | T -> FT'  |           |           
+T' |           | T' -> ε   | T'-> *FT' |           | T' -> ε   | T' -> ε   
+F  | F -> id   |           |           | F -> (E)  |           |           
+
+4. PARSING TRACE (Input: id * id + id $):
+-------------------------------------------------------------------------------
+Step | Stack           | Input           | Action
+-------------------------------------------------------------------------------
+1    | $E             | id * id + id$  | Apply E -> T E'
+2    | $E' T          | id * id + id$  | Apply T -> F T'
+3    | $E' T' F       | id * id + id$  | Apply F -> id
+4    | $E' T' id      | id * id + id$  | Match id
+5    | $E' T'         | * id + id$     | Apply T' -> * F T'
+6    | $E' T' F * | * id + id$     | Match *
+7    | $E' T' F       | id + id$       | Apply F -> id
+8    | $E' T' id      | id + id$       | Match id
+9    | $E' T'         | + id$          | Apply T' -> ε
+10   | $E'            | + id$          | Apply E' -> + T E'
+11   | $E' T +        | + id$          | Match +
+12   | $ E' T          | id $            | Apply T -> F T'
+13   | $ E' T' F       | id $            | Apply F -> id
+14   | $ E' T' id      | id $            | Match id
+15   | $ E' T'         | $               | Apply T' -> ε
+16   | $ E'            | $               | Apply E' -> ε
+17   | $               | $               | ✅ ACCEPTED
+-------------------------------------------------------------------------------

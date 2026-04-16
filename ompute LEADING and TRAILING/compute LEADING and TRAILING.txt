@@ -1,0 +1,53 @@
+OPERATOR PRECEDENCE PARSING - SAMPLE PROBLEM
+
+QUESTION:
+Given the following Operator Grammar, compute the LEADING and TRAILING sets for all non-terminals and construct the Operator Precedence Relation Table.
+
+Grammar:
+E -> E + T | T
+T -> T * F | F
+F -> ( E ) | id
+
+-------------------------------------------------------------------------------
+SOLUTION:
+
+1. LEADING SETS:
+--------------------------------------------------
+LEADING(E) = { +, *, (, id }
+LEADING(T) = { *, (, id }
+LEADING(F) = { (, id }
+
+Derivation Logic:
+- LEADING(F): F starts with '(' and 'id'.
+- LEADING(T): T starts with F, so it inherits LEADING(F). It also has T -> T * F, but '*' is not the first symbol.
+- LEADING(E): E starts with T, so it inherits LEADING(T). It also has E -> E + T, where '+' follows E.
+
+2. TRAILING SETS:
+--------------------------------------------------
+TRAILING(E) = { +, *, ), id }
+TRAILING(T) = { *, ), id }
+TRAILING(F) = { ), id }
+
+Derivation Logic:
+- TRAILING(F): F ends with ')' and 'id'.
+- TRAILING(T): T ends with F, so it inherits TRAILING(F). It also has T -> T * F, but F is at the end.
+- TRAILING(E): E ends with T, so it inherits TRAILING(T).
+
+3. OPERATOR PRECEDENCE RELATION TABLE:
+-------------------------------------------------------------------------------
+Symbols: ⋖ (Yields), ⋗ (Takes), ≐ (Equal)
+
+   | id  |  +  |  * |  (  |  )  |  $  
+---|-----|-----|-----|-----|-----|-----
+id |     |  ⋗  |  ⋗  |     |  ⋗  |  ⋗  
++  |  ⋖  |  ⋗  |  ⋖  |  ⋖  |  ⋗  |  ⋗  
+* |  ⋖  |  ⋗  |  ⋗  |  ⋖  |  ⋗  |  ⋗  
+(  |  ⋖  |  ⋖  |  ⋖  |  ⋖  |  ≐  |     
+)  |     |  ⋗  |  ⋗  |     |  ⋗  |  ⋗  
+$  |  ⋖  |  ⋖  |  ⋖  |  ⋖  |     |     
+
+-------------------------------------------------------------------------------
+VERDICT:
+The grammar is a valid Operator Precedence Grammar as there are no conflicts 
+in the precedence matrix (no cell contains more than one relation).
+-------------------------------------------------------------------------------

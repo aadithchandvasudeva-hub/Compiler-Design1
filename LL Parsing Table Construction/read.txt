@@ -1,0 +1,72 @@
+import collections
+
+# Defining the logic to generate the text content
+grammar_q = """GRAMMAR QUESTION:
+Construct the LL(1) Parsing Table for the following Context-Free Grammar (CFG):
+
+1. E  -> T E'
+2. E' -> + T E' | ε
+3. T  -> F T'
+4. T' -> * F T' | ε
+5. F  -> ( E ) | id
+
+Verify the grammar by tracing the input string: id + id * id
+"""
+
+solution = """SOLUTION:
+
+1. COMPUTE FIRST SETS:
+--------------------------------------------------
+FIRST(E)  = { (, id }
+FIRST(E') = { +, ε }
+FIRST(T)  = { (, id }
+FIRST(T') = { *, ε }
+FIRST(F)  = { (, id }
+
+2. COMPUTE FOLLOW SETS:
+--------------------------------------------------
+FOLLOW(E)  = { $, ) }
+FOLLOW(E') = { $, ) }
+FOLLOW(T)  = { +, $, ) }
+FOLLOW(T') = { +, $, ) }
+FOLLOW(F)  = { *, +, $, ) }
+
+3. LL(1) PARSING TABLE:
+-------------------------------------------------------------------------------
+NT |    id     |     +     |     * |     (     |     )     |     $     
+-------------------------------------------------------------------------------
+E  | E -> TE'  |           |           | E -> TE'  |           |           
+E' |           | E' -> +TE'|           |           | E' -> ε   | E' -> ε   
+T  | T -> FT'  |           |           | T -> FT'  |           |           
+T' |           | T' -> ε   | T' -> *FT'|           | T' -> ε   | T' -> ε   
+F  | F -> id   |           |           | F -> (E)  |           |           
+-------------------------------------------------------------------------------
+
+4. PARSING TRACE (Input: id + id * id $):
+-------------------------------------------------------------------------------
+Step | Stack           | Input           | Action
+-------------------------------------------------------------------------------
+1    | $ E             | id + id * id $  | Output E -> T E'
+2    | $ E' T          | id + id * id $  | Output T -> F T'
+3    | $ E' T' F       | id + id * id $  | Output F -> id
+4    | $ E' T' id      | id + id * id $  | Match id
+5    | $ E' T'         | + id * id $     | Output T' -> ε
+6    | $ E'            | + id * id $     | Output E' -> + T E'
+7    | $ E' T +        | + id * id $     | Match +
+8    | $ E' T          | id * id $       | Output T -> F T'
+9    | $ E' T' F       | id * id $       | Output F -> id
+10   | $ E' T' id      | id * id $       | Match id
+11   | $ E' T'         | * id $          | Output T' -> * F T'
+12   | $ E' T' F * | * id $          | Match *
+13   | $ E' T' F       | id $            | Output F -> id
+14   | $ E' T' id      | id $            | Match id
+15   | $ E' T'         | $               | Output T' -> ε
+16   | $ E'            | $               | Output E' -> ε
+17   | $               | $               | Accept
+-------------------------------------------------------------------------------
+"""
+
+content = grammar_q + "\n" + solution
+
+with open('ll1_parser_sample_output.txt', 'w', encoding='utf-8') as f:
+    f.write(content)
